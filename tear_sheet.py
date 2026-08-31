@@ -19,7 +19,7 @@ data = yf.download(
     tickers + [benchmark],
     start=start_date,
     end=end_date,
-    auto_adjust=True  # ensures Close is dividend/split-adjusted total return
+    auto_adjust=True  
 )["Close"]
 
 print(data.head())
@@ -30,7 +30,7 @@ returns = data.pct_change().dropna()
 print(returns.head().map(lambda x: f"{x:.2%}"))
 
 TRADING_DAYS = 252
-risk_free_rate = 0.02  # annualized, e.g. ~2% — treasury-bill-ish approximation
+risk_free_rate = 0.02  
 
 def cagr(prices):
     n_years = len(prices) / TRADING_DAYS
@@ -87,14 +87,14 @@ for col in drawdown.columns:
 plt.title("Drawdown Over Time")
 plt.xlabel("Date")
 plt.ylabel("Drawdown")
-plt.fill_between(drawdown.index, 0, drawdown["^GSPC"], alpha=0.1)  # shades under S&P as a reference
+plt.fill_between(drawdown.index, 0, drawdown["^GSPC"], alpha=0.1)  
 plt.legend()
 plt.grid(True, alpha=0.3)
 plt.tight_layout()
 plt.savefig("drawdown.png")
-plt.close()  # closes the figure so it doesn't linger in memory across script runs
+plt.close()  
 
-window = 126  # ~6 months of trading days
+window = 126 
 
 rolling_mean = returns.rolling(window).mean() * TRADING_DAYS
 rolling_std = returns.rolling(window).std() * np.sqrt(TRADING_DAYS)
@@ -117,10 +117,10 @@ plt.close()
 from scipy import stats
 import numpy as np
 
-# Convert to log returns for the regression (as flagged back in Step 2)
+
 log_returns = np.log(data / data.shift(1)).dropna()
 
-daily_rf = risk_free_rate / TRADING_DAYS  # spreads the annual 2% across each trading day
+daily_rf = risk_free_rate / TRADING_DAYS  
 
 market_excess = log_returns["^GSPC"] - daily_rf
 
@@ -181,7 +181,7 @@ for col, res in ff3_results.items():
 
 ff5_factors = web.DataReader("F-F_Research_Data_5_Factors_2x3_daily", "famafrench", start=start_date, end=end_date)[0]
 ff5_factors.index = ff5_factors.index.to_timestamp()
-ff5_factors = ff5_factors / 100  # same percentage-point gotcha as before
+ff5_factors = ff5_factors / 100  
 
 aligned5 = log_returns.join(ff5_factors, how="inner")
 
